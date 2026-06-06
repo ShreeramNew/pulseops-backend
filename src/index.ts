@@ -1,32 +1,30 @@
-import express from "express";
-import http from "http";
-import cors from "cors";
 import dotenv from "dotenv";
-import { initWebSocketServer } from "./websocket/socketHandler.js";
-import { startTelemetrySimulation } from "./simulator/agent.js";
-
 dotenv.config();
+import express from "express";
+import { createServer } from "http";
+
+import { connectDB } from "./config/db.js"; // Import Database configuration
+import { initWebSocketServer } from "./websocket/socketHandler.js";
+import analyticsRouter from "./routes/analytics.js"; // Your historical route
+
+
 
 const app = express();
-const port = process.env.PORT || 5000;
+const httpServer = createServer(app);
 
-app.use(cors());
+// Initialize Database connection before handling listeners
+connectDB();
+
 app.use(express.json());
+app.use("/api/analytics", analyticsRouter);
 
-// A simple health check endpoint for our API
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "healthy", timestamp: new Date() });
+  res.status(200).json({ status: "PulseOps Engine Online" });
 });
 
-// We create an HTTP server wrapping our express instance
-// This allows both Express REST routes and WebSockets to share the same port
-const server = http.createServer(app);
+initWebSocketServer(httpServer);
 
-// Initialize our WebSocket layer on top of the native server
-initWebSocketServer(server);
-
-server.listen(port, () => {
-  console.log(`🚀 PulseOps Telemetry Engine running on port ${port}`);
-  // Start the background data generator loop
-  startTelemetrySimulation();
+const PORT = process.env.PORT || 5000;
+httpServer.listen(PORT, () => {
+  console.log(`🚀 PulseOps Backend Gateway successfully running on port ${PORT}`);
 });
