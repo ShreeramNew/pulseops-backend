@@ -15,8 +15,17 @@ let lastSeenLogCount = 0;
 export const initWebSocketServer = (httpServer: Server): WebSocketServer => {
   const wss = new WebSocketServer({ server: httpServer });
   wss.on("connection", (ws: WebSocket) => {
+    console.log("🔌 New browser client connected to secure stream pool");
     connectedClients.add(ws);
-    ws.on("close", () => connectedClients.delete(ws));
+
+    // 🚀 QUICK FIX: Send an immediate welcome frame to verify data flows instantly!
+    ws.send(JSON.stringify({ type: "metrics", data: { ping: "pong" } }));
+
+    ws.on("close", () => {
+      console.log("❌ Client disconnected");
+      connectedClients.delete(ws);
+    });
+
     ws.on("error", () => connectedClients.delete(ws));
   });
 
