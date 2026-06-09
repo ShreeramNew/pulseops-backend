@@ -49,17 +49,18 @@ const startTelemetryScraper = () => {
 
       // 1. Process Metrics
       if (metricsRes.data.success) {
-        // ✅ Destructure all 6 properties arriving from the target application's endpoint
-        const { 
-          cpuUsagePercentage, 
-          memoryUsageMB, 
+        // ✅ Updated: Destructure the dynamic 'routes' array alongside global vitals
+        const {
+          cpuUsagePercentage,
+          memoryUsageMB,
           uptimeSeconds,
           totalRequests,
           avgLatencyMs,
-          errorRatePercentage
+          errorRatePercentage,
+          routes, // ◄ Real-time Redis Hash matrix
         } = metricsRes.data.metrics;
 
-        // ✅ Save the complete infrastructure profile snapshot into MongoDB
+        // ✅ Save the complete infrastructure profiling record straight into MongoDB
         await Metric.create({
           cpuUsagePercentage,
           memoryUsageMB,
@@ -67,6 +68,7 @@ const startTelemetryScraper = () => {
           totalRequests,
           avgLatencyMs,
           errorRatePercentage,
+          routes: routes || [], // Fallback to an empty list to keep casting structures clean
           timestamp: new Date(),
         });
 
@@ -76,7 +78,8 @@ const startTelemetryScraper = () => {
 
         // 🚨 Danger Zone Check: CPU Spike Warning
         if (cpuUsagePercentage > 85.0) {
-          const { checkAndSendAlert } = await import("../services/alertMailer.js");
+          const { checkAndSendAlert } =
+            await import("../services/alertMailer.js");
           checkAndSendAlert(
             `High CPU Utilization Spike: ${cpuUsagePercentage}%`,
             `The live Node process has exceeded the 85% safe operation threshold. Current RAM Allocation: ${memoryUsageMB} MB. Total Requests Handled: ${totalRequests}.`,
@@ -85,7 +88,8 @@ const startTelemetryScraper = () => {
 
         // 🚨 Danger Zone Check: Error Surge Alert (>5% of traffic failing)
         if (errorRatePercentage > 5.0 && totalRequests > 10) {
-          const { checkAndSendAlert } = await import("../services/alertMailer.js");
+          const { checkAndSendAlert } =
+            await import("../services/alertMailer.js");
           checkAndSendAlert(
             `High Application Error Rate: ${errorRatePercentage}%`,
             `Out of ${totalRequests} total requests, the server error generation threshold has breached safe limits. Immediate system inspection recommended.`,
@@ -113,7 +117,8 @@ const startTelemetryScraper = () => {
           });
 
           if (aiResponse.text) {
-            const { checkAndSendAlert } = await import("../services/alertMailer.js");
+            const { checkAndSendAlert } =
+              await import("../services/alertMailer.js");
             const trimmedDiagnosis = aiResponse.text.trim();
             if (connectedClients.size > 0)
               broadcastTelemetry("ai-diagnosis", trimmedDiagnosis);
