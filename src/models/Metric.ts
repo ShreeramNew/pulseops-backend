@@ -19,7 +19,14 @@ const MetricSchema: Schema = new Schema({
   totalRequests: { type: Number, required: true },
   avgLatencyMs: { type: Number, required: true },
   errorRatePercentage: { type: Number, required: true },
-  timestamp: { type: Date, default: Date.now, index: true } // Indexing ensures lightning-fast historical queries!
+
+  // 🛡️ THE STORAGE SHIELD: Automatically purges data older than 24 hours (86400 seconds)
+  timestamp: {
+    type: Date,
+    default: Date.now,
+    index: true,
+    expires: 86400,
+  },
 });
 
 export default mongoose.model<IMetric>("Metric", MetricSchema);
