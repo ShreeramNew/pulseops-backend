@@ -12,7 +12,8 @@ router.get("/history", async (req, res) => {
     const historicalData = await Metric.find({
       timestamp: { $gte: twentyFourHoursAgo }
     })
-    .select("cpuUsagePercentage memoryUsageMB timestamp -_id") // Only return fields needed for charts
+    // ✅ Updated field projection map to include the new APM data fields
+    .select("cpuUsagePercentage memoryUsageMB totalRequests avgLatencyMs errorRatePercentage timestamp -_id")
     .sort({ timestamp: 1 })
     .lean(); // ◄ Essential portfolio architecture choice!
 
