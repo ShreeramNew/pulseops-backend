@@ -6,9 +6,7 @@ import Metric from "./../models/Metric.js";
 
 const connectedClients = new Set<WebSocket>();
 
-const TARGET_APP_URL =
-  process.env.TARGET_APP_URL ||
-  "https://wackiness-anyplace-grape.ngrok-free.dev";
+const TARGET_APP_URL = process.env.TARGET_APP_URL || "";
 
 let lastSeenLogCount = 0;
 
