@@ -45,6 +45,7 @@ const startTelemetryScraper = () => {
   setInterval(async () => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      console.log("I am making req to:",`${TARGET_APP_URL}/api/metrics`)
       const [metricsRes, logsRes] = await Promise.all([
         axios.get(`${TARGET_APP_URL}/api/metrics`),
 
