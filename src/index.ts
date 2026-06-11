@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config"; // This forces loading BEFORE other files import!
 import express from "express";
 import { createServer } from "http";
 
