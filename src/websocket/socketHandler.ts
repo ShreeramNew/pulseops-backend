@@ -92,14 +92,14 @@ const startTelemetryScraper = () => {
         }
 
         // 🚨 Danger Zone Check: Error Surge Alert (>5% of traffic failing)
-        if (errorRatePercentage > 5.0 && totalRequests > 10) {
-          const { checkAndSendAlert } =
-            await import("../services/alertMailer.js");
-          checkAndSendAlert(
-            `High Application Error Rate: ${errorRatePercentage}%`,
-            `Out of ${totalRequests} total requests, the server error generation threshold has breached safe limits. Immediate system inspection recommended.`,
-          );
-        }
+        // if (errorRatePercentage > 5.0 && totalRequests > 10) {
+        //   const { checkAndSendAlert } =
+        //     await import("../services/alertMailer.js");
+        //   checkAndSendAlert(
+        //     `High Application Error Rate: ${errorRatePercentage}%`,
+        //     `Out of ${totalRequests} total requests, the server error generation threshold has breached safe limits. Immediate system inspection recommended.`,
+        //   );
+        // }
       }
 
       // 2. Process Logs & AI Alerting Pipeline
