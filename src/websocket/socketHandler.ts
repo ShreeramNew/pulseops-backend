@@ -46,12 +46,9 @@ const startTelemetryScraper = () => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
       const [metricsRes, logsRes] = await Promise.all([
-        axios.get(`${TARGET_APP_URL}/api/metrics`, {
-          headers: { "ngrok-skip-browser-warning": "true" },
-        }),
-        axios.get(`${TARGET_APP_URL}/api/logs`, {
-          headers: { "ngrok-skip-browser-warning": "true" },
-        }),
+        axios.get(`${TARGET_APP_URL}/api/metrics`),
+
+        axios.get(`${TARGET_APP_URL}/api/logs`),
       ]);
 
       // 1. Process Metrics
